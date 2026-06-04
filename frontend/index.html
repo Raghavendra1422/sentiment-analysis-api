@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🤗 Sentiment Analysis</h1>
+        <p class="subtitle">Powered by HuggingFace DistilBERT</p>
+
+        <div class="card">
+            <h2>Single Analysis</h2>
+            <textarea id="inputText" placeholder="Enter text to analyze..."></textarea>
+            <button onclick="analyzeSingle()">Analyze</button>
+            <div id="singleResult" class="result hidden"></div>
+        </div>
+
+        <div class="card">
+            <h2>Batch Analysis</h2>
+            <p class="hint">Enter one sentence per line</p>
+            <textarea id="batchText" placeholder="I love this product&#10;Worst experience ever&#10;Pretty good overall"></textarea>
+            <button onclick="analyzeBatch()">Analyze All</button>
+            <div id="batchResult" class="result hidden"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
