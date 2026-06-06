@@ -205,7 +205,33 @@ Open `frontend/index.html` in your browser.
 
 Note: The model correctly handles negation — "not bad" → POSITIVE, showing the attention mechanism understanding context.
 
+
 ---
+## 🐳 Docker & CI/CD
+
+### Run with Docker
+```bash
+docker build -t sentiment-api ./backend
+docker run -p 8000:8000 sentiment-api
+```
+
+### Run with docker-compose
+```bash
+docker compose up
+```
+
+### Run Tests
+```bash
+cd backend
+pytest test_api.py -v
+```
+
+### CI/CD Pipeline
+Every push to `master` automatically:
+- Runs all 7 pytest tests on Ubuntu
+- Builds the Docker image
+- Shows ✅ green badge if everything passes
+
 
 ## 📈 Future Improvements
 
