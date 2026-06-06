@@ -1,0 +1,69 @@
+name: CI — Sentiment Analysis API
+
+# Trigger: run this pipeline on every push and pull request to main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest   # GitHub gives us a free Ubuntu machine
+
+    steps:
+
+      # Step 1: Download our code onto the GitHub machine
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Python 3.11 on the GitHub machine
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Step 3: Cache pip packages so next run is faster
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Step 4: Install CPU-only torch + all dependencies
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install pytest httpx
+          pip install fastapi==0.111.0 "uvicorn[standard]==0.30.0" "pydantic==2.7.0"
+          pip install "torch==2.3.0+cpu" --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install "transformers==4.41.0"
+
+      # Step 5: Run all 7 pytest tests
+      - name: Run tests
+        run: |
+          cd backend
+          pytest test_api.py -v
+
+  docker:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: test   # Only runs if tests passed
+
+    steps:
+
+      # Step 1: Download code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t sentiment-api ./backend
+
+      # Step 3: Confirm image was created
+      - name: Verify image exists
+        run: docker images sentiment-api
