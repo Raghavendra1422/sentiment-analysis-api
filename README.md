@@ -38,19 +38,26 @@ JSON Response (label + confidence score)
 ```
 sentiment-analysis-api/
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml           # GitHub Actions CI/CD pipeline
+│
 ├── backend/
-|   |--Dockerfile            #
 │   ├── app.py               # FastAPI application + endpoints
 │   ├── model.py             # HuggingFace model loading + inference
 │   ├── schemas.py           # Pydantic request/response models
+│   ├── test_api.py          # Automated pytest test suite (7 tests)
 │   ├── test_model.py        # Model testing script
-│   └── requirements.txt
+│   ├── Dockerfile           # Docker container configuration
+│   ├── .dockerignore        # Files excluded from Docker build
+│   └── requirements.txt     # Python dependencies
 │
 ├── frontend/
 │   ├── index.html           # UI interface
 │   ├── style.css            # Dark theme styling
 │   └── script.js            # API calls + result rendering
 │
+├── docker-compose.yml       # Docker Compose configuration
 └── README.md
 ```
 
@@ -65,6 +72,10 @@ sentiment-analysis-api/
 | Validation | **Pydantic** | Request/response schema validation |
 | Server | **Uvicorn** | ASGI server for FastAPI |
 | Frontend | **HTML + CSS + JS** | Interactive UI |
+| Container | **Docker** | Portable containerized deployment |
+| Orchestration | **Docker Compose** | Multi-container management |
+| Testing | **pytest** | Automated API test suite |
+| CI/CD | **GitHub Actions** | Auto test + build on every push |
 
 ---
 
@@ -109,13 +120,6 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-## 🐳 Docker
-
-```bash
-cd backend
-docker build -t sentiment-api .
-docker run -p 8000:8000 sentiment-api
-```
 
 ### 4. Run the API
 ```bash
@@ -124,6 +128,57 @@ uvicorn app:app --reload
 
 ### 5. Open frontend
 Open `frontend/index.html` in your browser.
+
+---
+
+## 🐳 Docker & CI/CD
+
+### Run with Docker
+```bash
+docker build -t sentiment-api ./backend
+docker run -p 8000:8000 sentiment-api
+```
+
+### Run with docker-compose (recommended)
+```bash
+docker compose up
+```
+
+### Run Tests
+```bash
+cd backend
+pytest test_api.py -v
+```
+
+### CI/CD Pipeline
+Every push to `master` automatically:
+- Runs all 7 pytest tests on Ubuntu
+- Builds the Docker image
+- Shows ✅ green badge if everything passes
+
+<details>
+<summary><b>CI/CD Pipeline Steps — Click to expand</b></summary>
+
+```
+Push code to GitHub
+        ↓
+GitHub Actions triggers automatically
+        ↓
+Step 1: Checkout code on Ubuntu machine
+        ↓
+Step 2: Install Python 3.11
+        ↓
+Step 3: Install all dependencies (CPU-only torch)
+        ↓
+Step 4: Run pytest test_api.py -v (7 tests)
+        ↓
+Step 5: Build Docker image
+        ↓
+✅ Green badge — all good!
+❌ Red badge — something broke, fix before deploying
+```
+
+</details>
 
 ---
 
@@ -191,6 +246,9 @@ Open `frontend/index.html` in your browser.
 - **Attention Mechanism** — model understands context ("not bad" = positive)
 - **FastAPI** — production REST API with automatic Swagger documentation
 - **Batch Processing** — analyzing multiple texts in one API call
+- **Docker** — containerized deployment for consistent environments
+- **pytest** — automated test suite with 7 tests covering all endpoints
+- **GitHub Actions** — CI/CD pipeline that runs on every push
 
 ---
 
@@ -205,33 +263,7 @@ Open `frontend/index.html` in your browser.
 
 Note: The model correctly handles negation — "not bad" → POSITIVE, showing the attention mechanism understanding context.
 
-
 ---
-## 🐳 Docker & CI/CD
-
-### Run with Docker
-```bash
-docker build -t sentiment-api ./backend
-docker run -p 8000:8000 sentiment-api
-```
-
-### Run with docker-compose
-```bash
-docker compose up
-```
-
-### Run Tests
-```bash
-cd backend
-pytest test_api.py -v
-```
-
-### CI/CD Pipeline
-Every push to `master` automatically:
-- Runs all 7 pytest tests on Ubuntu
-- Builds the Docker image
-- Shows ✅ green badge if everything passes
-
 
 ## 📈 Future Improvements
 
