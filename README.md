@@ -39,6 +39,7 @@ JSON Response (label + confidence score)
 sentiment-analysis-api/
 │
 ├── backend/
+|   |--Dockerfile            #
 │   ├── app.py               # FastAPI application + endpoints
 │   ├── model.py             # HuggingFace model loading + inference
 │   ├── schemas.py           # Pydantic request/response models
@@ -107,6 +108,13 @@ source venv/bin/activate
 ### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
+```
+## 🐳 Docker
+
+```bash
+cd backend
+docker build -t sentiment-api .
+docker run -p 8000:8000 sentiment-api
 ```
 
 ### 4. Run the API
